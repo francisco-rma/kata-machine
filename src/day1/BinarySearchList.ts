@@ -2,6 +2,7 @@ export default function bs_list(haystack: number[], needle: number): boolean {
     let left: number = 0;
     let right: number = haystack.length - 1;
     let mid: number;
+    
     while (left <= right) {
         mid = Math.floor((left + right) / 2)
         const val = haystack[mid];
