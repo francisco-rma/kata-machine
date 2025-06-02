@@ -8,16 +8,22 @@ export default class RingBuffer<T> {
     constructor() {
         this.source = new Array(this.capacity);
     }
+
     _grow(): number {
         return 0;
     }
+
     push(item: T): void {
         let target_idx: number = this.tail;
         if (this.length === 0) {
             target_idx = this.head;
         }
         else if (this.length === this.capacity) {
-            target_idx = this._grow();
+            target_idx = this.head;
+            this.head -= 1;
+            if (this.head < 0) {
+                this.head += this.capacity;
+            }
         }
         else {
             target_idx = this.tail - 1;
@@ -30,7 +36,9 @@ export default class RingBuffer<T> {
         }
 
         this.source[this.tail] = item;
-        this.length += 1;
+        if (this.length < this.capacity) {
+            this.length += 1;
+        }
     }
 
     pop(): T | undefined {
@@ -50,14 +58,19 @@ export default class RingBuffer<T> {
 
 
     get(idx: number): T {
-        if (idx >= this.length) {
+        if (idx >= this.length || idx < 0) {
             throw new Error("Index out of bounds");
         }
 
-        let eff_idx: number = this.tail + (idx % this.length);
-        eff_idx = eff_idx >= this.length ? eff_idx - this.length : eff_idx;
+        let eff_idx: number = this.head - (idx % this.length);
+        if (eff_idx < 0) {
+            eff_idx += this.capacity;
+        }
+        else if (eff_idx >= this.length) {
+            eff_idx -= this.capacity;
+        }
 
-        const result = this.source[this.head - eff_idx];
+        const result = this.source[eff_idx];
         return result;
     }
 
