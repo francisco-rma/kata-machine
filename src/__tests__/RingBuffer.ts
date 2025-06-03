@@ -34,15 +34,15 @@ test("RingBuffer", function () {
     buffer.push(42);
     buffer.push(9);
     buffer.push(12);
-    
+
     peek = buffer.get(2);
     console.log("Peek: ", peek);
     expect(peek).toEqual(12);
-    
+
     peek = buffer.get(1);
     console.log("Peek: ", peek);
     expect(peek).toEqual(9);
-    
+
     peek = buffer.get(0);
     console.log("Peek: ", peek);
     expect(peek).toEqual(42);
@@ -56,26 +56,85 @@ test("RingBuffer", function () {
     peek = buffer.get(0);
     console.log("Peek: ", peek);
     expect(peek).toEqual(42);
-    
+
     peek = buffer.get(1);
     console.log("Peek: ", peek);
     expect(peek).toEqual(9);
-    
+
     peek = buffer.get(2);
     console.log("Peek: ", peek);
     expect(peek).toEqual(12);
-    
+
     peek = buffer.get(3);
     console.log("Peek: ", peek);
     expect(peek).toEqual(38);
-    
+
     peek = buffer.get(4);
     console.log("Peek: ", peek);
     expect(peek).toEqual(340);
-    
+
     peek = buffer.get(5);
     console.log("Peek: ", peek);
     expect(peek).toEqual(6);
+
+    buffer.push(30);
+    console.log(buffer)
+    buffer.push(31);
+    console.log(buffer)
+    buffer.push(32);
+    console.log(buffer)
+    buffer.push(33);
+    console.log(buffer)
+    buffer.push(34);
+    console.log(buffer)
+    buffer.push(35);
+    console.log(buffer)
+    buffer.push(36);
+    console.log(buffer)
+    buffer.push(37);
+    console.log(buffer)
+    buffer.push(38);
+    console.log(buffer)
+    buffer.push(39);
+    console.log(buffer)
+    buffer.push(0);
+    buffer.push(0);
+    buffer.push(0);
+    buffer.push(0);
+    buffer.push(0);
+    buffer.push(0);
+    buffer.push(0);
+    buffer.push(0);
+    buffer.push(0);
+    buffer.push(0);
+    buffer.push(0);
+    buffer.push(0);
+    buffer.push(0);
+    buffer.push(0);
+
+    console.log(buffer)
+
+
+    for (let index = 0; index < buffer.length; index++) {
+        const element = buffer.get(index);
+        buffer.pop();
+        console.log(buffer)
+        expect(element).toEqual(0);
+    }
+    
+    let i: number = buffer.length;
+    while (i > 0) {
+        console.log(buffer);
+        const result = buffer.pop();
+        expect(result).toEqual(0);
+        i -= 1;
+    }
+    
+    console.log(buffer);
+    result = buffer.pop();
+    expect(buffer.length).toEqual(0);
+    expect(result).toEqual(undefined);
+    
 
 });
 
