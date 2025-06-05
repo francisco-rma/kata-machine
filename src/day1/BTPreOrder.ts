@@ -15,8 +15,8 @@ function dfs(node: BinaryNode<number>, out: number[]): number[] {
 
     console.log("result: ", out);
     return out;
-
 }
+
 export default function pre_order_search(head: BinaryNode<number>): number[] {
     let out: number[] = [];
     const result = dfs(head, out);
