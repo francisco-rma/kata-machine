@@ -16,10 +16,10 @@ export default function bfs(head: BinaryNode<number>, needle: number): boolean {
             result = true;
             break;
         }
-        if (node.left) {
+        if (node.left && !visited.has(node.left)) {
             queue.enqueue(node.left);
         }
-        if (node.right) {
+        if (node.right && !visited.has(node.right)) {
             queue.enqueue(node.right);
         }
     }
