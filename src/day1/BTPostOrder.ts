@@ -1,6 +1,5 @@
 function dfs(node: BinaryNode<number>, out: number[]): number[] {
     if (!(node.left || node.right)) {
-        console.log("Leaf node: ", node);
         out.push(node.value);
         return out;
     }
@@ -14,7 +13,6 @@ function dfs(node: BinaryNode<number>, out: number[]): number[] {
     }
     
     out.push(node.value);
-    console.log("result: ", out);
     return out;
 }
 
