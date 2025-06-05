@@ -24,6 +24,20 @@ export default class DoublyLinkedList<T> {
         this.tail = undefined;
         this.length = 0;
     }
+    _get_by_value(item: T): [Node<T> | undefined, Node<T> | undefined] {
+        let node: Node<T> | undefined = this.head;
+        let prev: Node<T> | undefined = undefined;
+
+        while (node) {
+            if (node.value === item) {
+                break;
+            }
+            prev = node;
+            node = node.next;
+        }
+
+        return [prev, node];
+    }
 
     append(item: T): void {
         const node = new Node<T>(item);
@@ -87,17 +101,7 @@ export default class DoublyLinkedList<T> {
         return aux.value;
     }
     insertAt(item: T, idx: number): void {
-        let node: Node<T> | undefined = this.head;
-        let prev: Node<T> | undefined = undefined;
-        let i: number = 0;
-
-        while (i < idx) {
-            if (node) {
-                prev = node;
-                node = node.next;
-            }
-            i += 1;
-        }
+        let [prev, node] = this._get_by_index(idx);
         if (!prev) {
             this.prepend(item);
             return;
@@ -120,41 +124,39 @@ export default class DoublyLinkedList<T> {
         else if (item === this.tail?.value) {
             result = this._remove_tail();
         } else {
-            let node: Node<T> | undefined = this.head;
-            let prev: Node<T> | undefined = undefined;
-
-            while (node) {
-                if (node.value === item) {
-                    result = node.value;
-                    if (node.next) {
-                        node.next.prev = prev;
-                    }
-                    if (prev) {
-                        prev.next = node.next;
-                    }
-                    node.next = undefined;
-                    node.prev = undefined;
-                    this.length -= 1;
-                    break;
-                }
-                prev = node;
-                node = node.next;
+            let [prev, node] = this._get_by_value(item);
+            if (!node) {
+                return undefined;
             }
+            if (node.next) {
+                node.next.prev = prev;
+            }
+            if (prev) {
+                prev.next = node.next;
+            }
+            node.next = undefined;
+            node.prev = undefined;
+            this.length -= 1;
+            result = node.value;
         }
         return result;
     }
+    
     get(idx: number): T | undefined {
-        let node: Node<T> | undefined = this.head;
-        let i: number = 0;
+        let [_, node] = this._get_by_index(idx);
+        return node?.value;
+    }
 
-        while (i < idx) {
-            if (node) {
-                node = node.next;
-            }
+    _get_by_index(idx: number): [Node<T> | undefined, Node<T> | undefined] {
+        let node: Node<T> | undefined = this.head;
+        let prev: Node<T> | undefined = undefined;
+        let i: number = 0;
+        while (i < idx && node) {
+            prev = node;
+            node = node.next;
             i += 1;
         }
-        return node?.value;
-
+        return [prev, node];
     }
     removeAt(idx: number): T | undefined {
         let result: T | undefined = undefined;
@@ -165,27 +167,19 @@ export default class DoublyLinkedList<T> {
             result = this._remove_tail();
         }
         else {
-            let node: Node<T> | undefined = this.head;
-            let prev: Node<T> | undefined = undefined;
-            let i: number = 0;
-            while (i < idx) {
-                if (node) {
-                    prev = node;
-                    node = node.next;
-                }
-                i += 1;
+            let [prev, node] = this._get_by_index(idx);
+            if (!node) {
+                return undefined;
             }
-            if (node) {
-                if (node.next) {
-                    node.next.prev = prev;
-                }
-                if (prev) {
-                    prev.next = node?.next;
-                }
-                node.next = undefined;
-                node.prev = undefined;
-                this.length -= 1;
+            if (node.next) {
+                node.next.prev = prev;
             }
+            if (prev) {
+                prev.next = node?.next;
+            }
+            node.next = undefined;
+            node.prev = undefined;
+            this.length -= 1;
             result = node?.value;
         }
         return result;
