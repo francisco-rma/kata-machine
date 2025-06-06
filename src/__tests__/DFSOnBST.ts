@@ -1,5 +1,27 @@
-import dfs, { dfs_insert } from "@code/DFSOnBST";
+import dfs, { dfs_insert, is_valid } from "@code/DFSOnBST";
 import { tree } from "./tree";
+
+class SeededRandom {
+    private seed: number;
+    private min: number;
+    private max: number;
+    constructor(seed: number, min: number, max: number) {
+        this.seed = seed;
+        this.min = min;
+        this.max = max;
+    }
+    next(): number {
+        // LCG parameters (example values)
+        this.seed = (this.seed * 1664525 + 1013904223) % 0x100000000;
+        return this.seed / 0x100000000;
+    }
+    nextInt(): number {
+        return Math.floor(this.next() * (this.max - this.min + 1)) + this.min;
+    }
+}
+
+const [min, max] = [0, 1000];
+const rng = new SeededRandom(10, min, max);
 
 function printTree(node: BinaryNode<number> | null, prefix = "", isLeft = true): string {
     if (!node) return "";
@@ -13,17 +35,6 @@ function printTree(node: BinaryNode<number> | null, prefix = "", isLeft = true):
     }
     return result;
 }
-
-function debug_insertion(my_tree: BinaryNode<number>, insertion_target: number): [BinaryNode<number> | null, BinaryNode<number> | null] {
-    let [result, parent] = dfs_insert(my_tree, insertion_target);
-
-    console.log("Insertion target:", insertion_target);
-    console.log("Result node:", result);
-    console.log("Parent node:", parent);
-    console.log("Result tree:\n" + printTree(my_tree));
-    return [result, parent];
-}
-
 
 test("DFS on BST", function () {
     expect(dfs(tree, 45)).toEqual(true);
@@ -55,36 +66,74 @@ test("Debug", function () {
     };
 
     let insertion_target: number = 40;
-    let [result, parent] = debug_insertion(my_tree, insertion_target);
+    // let [result, parent] = debug_insertion(my_tree, insertion_target);
 
-    expect(result?.value).toEqual(insertion_target);
-    expect(parent).toEqual({
-        value: 50,
-        right: null,
-        left: { value: insertion_target },
-    } as BinaryNode<number>);
+    // expect(is_valid(my_tree)).toEqual(true);
+    // expect(result?.value).toEqual(insertion_target);
+    // expect(parent).toEqual({
+    //     value: 50,
+    //     right: null,
+    //     left: { value: insertion_target, left: null, right: null },
+    // } as BinaryNode<number>);
 
-    insertion_target = 11;
-    [result, parent] = debug_insertion(my_tree, insertion_target);
+    // insertion_target = 11;
+    // [result, parent] = debug_insertion(my_tree, insertion_target);
+    // expect(is_valid(my_tree)).toEqual(true);
+    // expect(result?.value).toEqual(insertion_target);
+    // expect(parent).toEqual({
+    //     value: 15,
+    //     right: null,
+    //     left: { value: insertion_target, left: null, right: null },
+    // } as BinaryNode<number>);
 
-    expect(result?.value).toEqual(insertion_target);
-    expect(parent).toEqual({
-        value: 15,
-        right: null,
-        left: { value: insertion_target },
-    } as BinaryNode<number>);
+    // insertion_target = 75;
+    // [result, parent] = debug_insertion(my_tree, insertion_target);
+    // expect(is_valid(my_tree)).toEqual(true);
+    // expect(result?.value).toEqual(insertion_target);
+    // expect(parent).toEqual({
+    //     value: 50,
+    //     right: { value: insertion_target, left: null, right: null },
+    //     left: parent?.left,
+    // } as BinaryNode<number>);
 
-    insertion_target = 75;
-    [result, parent] = debug_insertion(my_tree, insertion_target);
 
-    expect(result?.value).toEqual(insertion_target);
-    expect(parent).toEqual({
-        value: 50,
-        right: { value: insertion_target },
-        left: parent?.left,
-    } as BinaryNode<number>);
+    for (let index = 0; index < 100; index++) {
+        insertion_target = rng.nextInt();
 
-    
+        let [result, parent] = dfs_insert(my_tree, insertion_target);
+
+        expect(is_valid(my_tree)).toEqual(true);
+
+        expect(parent).toBeDefined();
+        expect(result?.value).toEqual(insertion_target);
+
+        if (!parent) {
+            throw new Error("Missing parent: ${parent}");
+        }
+
+        let expected_node = {
+            value: parent.value,
+            right: parent.value < insertion_target ? { value: insertion_target, left: null, right: null } as BinaryNode<number> : parent?.right,
+            left: parent.value >= insertion_target ? { value: insertion_target, left: null, right: null } as BinaryNode<number> : parent?.left,
+        } as BinaryNode<number>;
+
+        if (!expected_node.left) {
+            expected_node.left = null;
+        }
+        if (!expected_node.right) {
+            expected_node.right = null;
+        }
+
+        expect(parent).toEqual(expected_node);
+        console.log("------------------------" + `Iteration ${index} ` + "------------------------")
+        console.log("Insertion target:", insertion_target);
+        console.log("Result node:", result);
+        console.log("Parent node:", parent);
+        console.log("\n");
+        // console.clear();
+    }
+
+    console.log("Result tree:\n" + printTree(my_tree));
 });
 
 
