@@ -20,8 +20,8 @@ class SeededRandom {
     }
 }
 
-const [min, max] = [0, 1000];
-const rng = new SeededRandom(10, min, max);
+const [min, max] = [0, 10000];
+const rng = new SeededRandom(150, min, max);
 
 function printTree(node: BinaryNode<number> | null, prefix = "", isLeft = true): string {
     if (!node) return "";
@@ -44,27 +44,11 @@ test("DFS on BST", function () {
 
 test("Debug", function () {
     let my_tree: BinaryNode<number> = {
-        value: 20,
-        right: {
-            value: 50,
-            right: null,
-            left: null,
-        },
-        left: {
-            value: 10,
-            right: {
-                value: 15,
-                right: null,
-                left: null,
-            },
-            left: {
-                value: 5,
-                right: null,
-                left: null,
-            }
-        }
+        value: Math.floor(min + (max - min) / 2),
+        right: null,
+        left: null
     };
-    
+
     for (let index = 0; index < 100; index++) {
         const insertion_target = rng.nextInt();
 
