@@ -64,41 +64,9 @@ test("Debug", function () {
             }
         }
     };
-
-    let insertion_target: number = 40;
-    // let [result, parent] = debug_insertion(my_tree, insertion_target);
-
-    // expect(is_valid(my_tree)).toEqual(true);
-    // expect(result?.value).toEqual(insertion_target);
-    // expect(parent).toEqual({
-    //     value: 50,
-    //     right: null,
-    //     left: { value: insertion_target, left: null, right: null },
-    // } as BinaryNode<number>);
-
-    // insertion_target = 11;
-    // [result, parent] = debug_insertion(my_tree, insertion_target);
-    // expect(is_valid(my_tree)).toEqual(true);
-    // expect(result?.value).toEqual(insertion_target);
-    // expect(parent).toEqual({
-    //     value: 15,
-    //     right: null,
-    //     left: { value: insertion_target, left: null, right: null },
-    // } as BinaryNode<number>);
-
-    // insertion_target = 75;
-    // [result, parent] = debug_insertion(my_tree, insertion_target);
-    // expect(is_valid(my_tree)).toEqual(true);
-    // expect(result?.value).toEqual(insertion_target);
-    // expect(parent).toEqual({
-    //     value: 50,
-    //     right: { value: insertion_target, left: null, right: null },
-    //     left: parent?.left,
-    // } as BinaryNode<number>);
-
-
+    
     for (let index = 0; index < 100; index++) {
-        insertion_target = rng.nextInt();
+        const insertion_target = rng.nextInt();
 
         let [result, parent] = dfs_insert(my_tree, insertion_target);
 
