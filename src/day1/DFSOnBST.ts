@@ -37,7 +37,6 @@ export function is_valid(head: BinaryNode<number>): boolean {
     return validation_walk(head, true);
 }
 
-
 export function df_parent_search(head: BinaryNode<number>, needle: number): BinaryNode<number> {
     let node: BinaryNode<number> | null = head;
     let parent: BinaryNode<number> | null = null;
@@ -74,6 +73,10 @@ export function dfs_insert(head: BinaryNode<number>, new_item: number): [BinaryN
             parent.right = node;
         }
     }
-
+    
     return [node, parent];
+}
+
+
+export function dfs_delete(head: BinaryNode<number>, target: number): void{
 }
