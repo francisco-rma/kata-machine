@@ -17,7 +17,7 @@ export default function dfs(head: BinaryNode<number>, needle: number): boolean {
     return result;
 }
 
-function validation_walk(node: BinaryNode<number> | null, result: boolean): boolean {
+function bst_validation(node: BinaryNode<number> | null, result: boolean): boolean {
     if (!node) {
         return true;
     }
@@ -28,15 +28,15 @@ function validation_walk(node: BinaryNode<number> | null, result: boolean): bool
         return false;
     }
 
-    const left_walk = validation_walk(node.left, result);
-    const right_walk = validation_walk(node.right, result);
+    const left_walk = bst_validation(node.left, result);
+    const right_walk = bst_validation(node.right, result);
     return result && left_walk && right_walk;
 }
 export function is_valid(head: BinaryNode<number>): boolean {
-    return validation_walk(head, true);
+    return bst_validation(head, true);
 }
 
-export function df_parent_search(head: BinaryNode<number>, needle: number): BinaryNode<number> {
+export function bst_parent_search(head: BinaryNode<number>, needle: number): BinaryNode<number> {
     let node: BinaryNode<number> | null = head;
     let parent: BinaryNode<number> | null = null;
 
@@ -57,8 +57,8 @@ export function df_parent_search(head: BinaryNode<number>, needle: number): Bina
     return parent;
 }
 
-export function dfs_insert(head: BinaryNode<number>, new_item: number): [BinaryNode<number> | null, BinaryNode<number> | null] {
-    let parent: BinaryNode<number> = df_parent_search(head, new_item);
+export function bst_insert(head: BinaryNode<number>, new_item: number): [BinaryNode<number> | null, BinaryNode<number> | null] {
+    let parent: BinaryNode<number> = bst_parent_search(head, new_item);
     let node: BinaryNode<number> = { value: new_item, left: null, right: null } as BinaryNode<number>;
     if (parent.left && parent.right) {
         throw new Error("Node is full");
@@ -76,7 +76,7 @@ export function dfs_insert(head: BinaryNode<number>, new_item: number): [BinaryN
 }
 
 
-function dfs_max(head: BinaryNode<number>): [BinaryNode<number> | null, BinaryNode<number> | null] {
+function bst_max(head: BinaryNode<number>): [BinaryNode<number> | null, BinaryNode<number> | null] {
     let node: BinaryNode<number> | null = head;
     let parent: BinaryNode<number> | null = null;
     while (node && node.right) {
@@ -86,7 +86,7 @@ function dfs_max(head: BinaryNode<number>): [BinaryNode<number> | null, BinaryNo
     return [node, parent];
 }
 
-export function dfs_delete(head: BinaryNode<number>, target: number): void {
+export function bst_delete(head: BinaryNode<number>, target: number): void {
     let node: BinaryNode<number> | null = head;
     let parent: BinaryNode<number> | null = null;
 
@@ -136,7 +136,7 @@ export function dfs_delete(head: BinaryNode<number>, target: number): void {
         return;
     }
 
-    let [max_subnode, max_subnode_parent] = dfs_max(node.left);
+    let [max_subnode, max_subnode_parent] = bst_max(node.left);
     if (!max_subnode) {
         if (node == parent.left) {
             parent.left = null;

@@ -1,4 +1,4 @@
-import dfs, { dfs_delete, dfs_insert, is_valid } from "@code/DFSOnBST";
+import dfs, { bst_delete, bst_insert, is_valid } from "@code/DFSOnBST";
 import { tree } from "./tree";
 
 function randomDistinctIntegers(count: number, min: number, max: number): number[] {
@@ -70,7 +70,7 @@ test("Insertion", function () {
     for (let index = 0; index < 100; index++) {
         const insertion_target = rng.nextInt();
 
-        let [result, parent] = dfs_insert(my_tree, insertion_target);
+        let [result, parent] = bst_insert(my_tree, insertion_target);
 
         expect(is_valid(my_tree)).toEqual(true);
 
@@ -116,7 +116,7 @@ test("Deletion", function () {
     const insertion_targets = randomDistinctIntegers(100, min + 1, max);
 
     for (let index = 0; index < 100; index++) {
-        let [result, _] = dfs_insert(my_tree, insertion_targets[index]);
+        let [result, _] = bst_insert(my_tree, insertion_targets[index]);
         expect(result?.value).toEqual(insertion_targets[index]);
         expect(dfs(my_tree, insertion_targets[index])).toEqual(true);
     }
@@ -127,7 +127,7 @@ test("Deletion", function () {
         const target = insertion_targets[index];
 
         expect(dfs(my_tree, target)).toEqual(true);
-        dfs_delete(my_tree, target);
+        bst_delete(my_tree, target);
         expect(dfs(my_tree, target)).toEqual(false);
 
         if (my_tree) {
