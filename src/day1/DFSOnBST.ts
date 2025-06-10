@@ -1,6 +1,5 @@
 export default function dfs(head: BinaryNode<number>, needle: number): boolean {
     let node: BinaryNode<number> | null = head;
-    let parent: BinaryNode<number> | null = head;
     let result: boolean = false;
     while (node) {
         if (node.value === needle) {
@@ -61,7 +60,6 @@ export function df_parent_search(head: BinaryNode<number>, needle: number): Bina
 export function dfs_insert(head: BinaryNode<number>, new_item: number): [BinaryNode<number> | null, BinaryNode<number> | null] {
     let parent: BinaryNode<number> = df_parent_search(head, new_item);
     let node: BinaryNode<number> = { value: new_item, left: null, right: null } as BinaryNode<number>;
-    console.log("parent: ", parent);
     if (parent.left && parent.right) {
         throw new Error("Node is full");
     }
@@ -73,10 +71,98 @@ export function dfs_insert(head: BinaryNode<number>, new_item: number): [BinaryN
             parent.right = node;
         }
     }
-    
+
     return [node, parent];
 }
 
 
-export function dfs_delete(head: BinaryNode<number>, target: number): void{
+function dfs_max(head: BinaryNode<number>): [BinaryNode<number> | null, BinaryNode<number> | null] {
+    let node: BinaryNode<number> | null = head;
+    let parent: BinaryNode<number> | null = null;
+    while (node && node.right) {
+        parent = node;
+        node = node.right;
+    }
+    return [node, parent];
+}
+
+export function dfs_delete(head: BinaryNode<number>, target: number): void {
+    let node: BinaryNode<number> | null = head;
+    let parent: BinaryNode<number> | null = null;
+
+    while (node) {
+        if (node.value === target) {
+            break;
+        }
+        else if (node.value < target) {
+            parent = node;
+            node = node.right;
+        }
+        else {
+            parent = node;
+            node = node.left;
+        }
+    }
+
+    if (!parent) {
+        head.left = null;
+        head.right = null;
+        return;
+    }
+    if (!node) {
+        throw new Error("Node not found");
+    }
+
+    if (!node.left) {
+        if (node == parent.left) {
+            parent.left = node.right;
+        }
+        else if (node == parent.right) {
+            parent.right = node.right;
+        }
+        node.left = null;
+        node.right = null;
+        return;
+    }
+    else if (!node.right) {
+        if (node == parent.left) {
+            parent.left = node.left;
+        }
+        else if (node == parent.right) {
+            parent.right = node.left;
+        }
+        node.left = null;
+        node.right = null;
+        return;
+    }
+
+    let [max_subnode, max_subnode_parent] = dfs_max(node.left);
+    if (!max_subnode) {
+        if (node == parent.left) {
+            parent.left = null;
+        }
+        else {
+            parent.right = null;
+        }
+    }
+    else {
+        if (max_subnode_parent) {
+            max_subnode_parent.right = null;
+        }
+
+        if (max_subnode != node.left) {
+            max_subnode.left = node.left;
+        }
+
+        max_subnode.right = node.right;
+
+        if (node === parent.left) {
+            parent.left = max_subnode;
+        }
+        if (node === parent.right) {
+            parent.right = max_subnode;
+        }
+    }
+    node.left = null;
+    node.right = null;
 }
