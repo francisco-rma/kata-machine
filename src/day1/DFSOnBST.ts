@@ -17,7 +17,7 @@ export default function dfs(head: BinaryNode<number>, needle: number): boolean {
     return result;
 }
 
-function bst_validation(node: BinaryNode<number> | null, result: boolean): boolean {
+export function bst_validation(node: BinaryNode<number> | null, result: boolean): boolean {
     if (!node) {
         return true;
     }
@@ -32,6 +32,7 @@ function bst_validation(node: BinaryNode<number> | null, result: boolean): boole
     const right_walk = bst_validation(node.right, result);
     return result && left_walk && right_walk;
 }
+
 export function is_valid(head: BinaryNode<number>): boolean {
     return bst_validation(head, true);
 }
@@ -75,9 +76,8 @@ export function bst_insert(head: BinaryNode<number>, new_item: number): [BinaryN
     return [node, parent];
 }
 
-
-function bst_max(head: BinaryNode<number>): [BinaryNode<number> | null, BinaryNode<number> | null] {
-    let node: BinaryNode<number> | null = head;
+export function bst_max(head: BinaryNode<number>): [BinaryNode<number>, BinaryNode<number> | null] {
+    let node: BinaryNode<number> = head;
     let parent: BinaryNode<number> | null = null;
     while (node && node.right) {
         parent = node;
@@ -104,15 +104,20 @@ export function bst_delete(head: BinaryNode<number>, target: number): void {
         }
     }
 
+    // The node to delete is the head
     if (!parent) {
         head.left = null;
         head.right = null;
         return;
     }
+
+    // The node to delete is not found
     if (!node) {
         throw new Error("Node not found");
     }
 
+    // Case 1: the node to delete only has 1 child
+    // 1a: child is the right child
     if (!node.left) {
         if (node == parent.left) {
             parent.left = node.right;
@@ -124,6 +129,7 @@ export function bst_delete(head: BinaryNode<number>, target: number): void {
         node.right = null;
         return;
     }
+    // 1b: child is the left child
     else if (!node.right) {
         if (node == parent.left) {
             parent.left = node.left;
@@ -136,33 +142,28 @@ export function bst_delete(head: BinaryNode<number>, target: number): void {
         return;
     }
 
+    // Case 2: the node to delete has 2 children
     let [max_subnode, max_subnode_parent] = bst_max(node.left);
-    if (!max_subnode) {
-        if (node == parent.left) {
-            parent.left = null;
-        }
-        else {
-            parent.right = null;
-        }
+    
+    // Detaching the max subnode from its parent
+    if (max_subnode_parent) {
+        max_subnode_parent.right = null;
     }
-    else {
-        if (max_subnode_parent) {
-            max_subnode_parent.right = null;
-        }
 
-        if (max_subnode != node.left) {
-            max_subnode.left = node.left;
-        }
-
-        max_subnode.right = node.right;
-
-        if (node === parent.left) {
-            parent.left = max_subnode;
-        }
-        if (node === parent.right) {
-            parent.right = max_subnode;
-        }
+    // Guard clause to avoid a cyclic reference
+    if (max_subnode != node.left) {
+        max_subnode.left = node.left;
     }
+
+    max_subnode.right = node.right;
+
+    if (node === parent.left) {
+        parent.left = max_subnode;
+    }
+    if (node === parent.right) {
+        parent.right = max_subnode;
+    }
+    
     node.left = null;
     node.right = null;
 }
